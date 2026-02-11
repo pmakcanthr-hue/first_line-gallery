@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Line Gallery | Premium Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --accent: #000;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { 
+            background: var(--bg-gradient); 
+            min-height: 100vh; 
+            color: #1d1d1f; 
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        nav {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 800px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 15px 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 2000;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+        }
+
+        .logo { font-weight: 800; font-size: 1.1rem; letter-spacing: -0.5px; cursor: pointer; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links button {
+            background: none; border: none; font-size: 0.85rem; font-weight: 500;
+            color: #515154; cursor: pointer; transition: 0.3s;
+        }
+        .nav-links button:hover { color: #000; }
+
+        .page { display: none; padding: 120px 5% 60px; min-height: 100vh; animation: pageTransition 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .page.active { display: block; }
+        @keyframes pageTransition { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hero-section { display: flex; align-items: center; justify-content: space-between; padding: 40px 0; gap: 40px; }
+        .hero-text { flex: 1; }
+        .hero-title { font-size: 4.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; }
+        .hero-image { flex: 1; display: flex; justify-content: center; position: relative; }
+        .hero-image img { width: 100%; max-width: 500px; border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
+        
+        .featured-header { margin-top: 80px; font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 30px; }
+
+        .artist-card {
+            background: var(--glass); border-radius: 30px; padding: 40px;
+            display: flex; gap: 40px; align-items: center; border: 1px solid var(--glass-border);
+        }
+        .artist-img { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; }
+        .ig-badge { 
+            display: inline-block; padding: 10px 20px; background: #000; color: #fff; 
+            border-radius: 20px; text-decoration: none; margin-top: 20px; font-size: 0.8rem;
+        }
+
+        .category-nav { display: flex; gap: 15px; margin-bottom: 40px; overflow-x: auto; padding: 10px 0; }
+        .cat-btn {
+            padding: 8px 20px; border-radius: 20px; border: 1px solid var(--glass-border);
+            background: var(--glass); cursor: pointer; white-space: nowrap; font-size: 0.85rem; transition: 0.3s;
+        }
+        .cat-btn.active { background: #000; color: #fff; }
+
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+        
+        .art-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: 0.4s ease;
+        }
+        .art-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+        .art-card img { width: 100%; height: 350px; object-fit: cover; }
+        .art-card-info { padding: 20px; }
+
+        .admin-btn { position: fixed; bottom: 30px; right: 30px; background: #000; color: #fff; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; z-index: 1000; font-size: 24px; }
+        .admin-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 3000; justify-content: center; align-items: center; backdrop-filter: blur(5px);
+        }
+        .modal-content { background: #fff; padding: 40px; border-radius: 20px; width: 95%; max-width: 500px; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+
+        @media (max-width: 768px) {
+            .hero-section { flex-direction: column; text-align: center; }
+            .hero-title { font-size: 3rem; }
+            .artist-card { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo" onclick="showPage('home')">First Line Gallery</div>
+        <div class="nav-links">
+            <button onclick="showPage('home')">Home</button>
+            <button onclick="showPage('artist')">Artist</button>
+            <button onclick="showPage('works')">Exhibitions</button>
+        </div>
+    </nav>
+
+    <section id="home" class="page active">
+        <div class="hero-section">
+            <div class="hero-text">
+                <h1 class="hero-title">Exhibition<br>Art Experience.</h1>
+                <p style="color: #6e6e73; font-size: 1.2rem; max-width: 450px;">ยินดีต้อนรับสู่ First Line Gallery พื้นที่รวบรวมงานศิลปะร่วมสมัยที่คัดสรรมาเป็นพิเศษเพื่อคุณ</p>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?q=80&w=1000" alt="Hero">
+            </div>
+        </div>
+        
+        <h2 class="featured-header">Featured Masterpiece</h2>
+        <div id="featuredArea" class="gallery-grid"></div>
+    </section>
+
+    <section id="artist" class="page">
+        <h2 style="font-size: 3rem; margin-bottom: 40px;">The Artist</h2>
+        <div class="artist-card">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=500" class="artist-img" alt="Artist">
+            <div>
+                <h3 style="font-size: 2rem;">STORY_E_BAS</h3>
+                <p style="margin-top: 10px; color: #6e6e73;">Digital Curator & Mixed Media Artist ที่เน้นการเล่าเรื่องผ่านลายเส้นที่เรียบง่ายแต่ทรงพลัง</p>
+                <a href="https://www.instagram.com/store_e_bas?igsh=eTB0MzYzcWh2eGp5&utm_source=qr" target="_blank" class="ig-badge">Follow @story_e_bas</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="works" class="page">
+        <h2 style="font-size: 3rem; margin-bottom: 20px;">Exhibitions</h2>
+        
+        <div class="category-nav" id="catNav">
+            <button class="cat-btn active" onclick="filterGallery('All')">All Works</button>
+            <button class="cat-btn" onclick="filterGallery('ศิลปกรรมเด็กเเละเยาวชนเเห่งชาติ')">ศิลปกรรมเด็กเเละเยาวชนเเห่งชาติ</button>
+            <button class="cat-btn" onclick="filterGallery('nanmee fine art')">Nanmee Fine Art</button>
+            <button class="cat-btn" onclick="filterGallery('Digital')">Digital Art</button>
+        </div>
+
+        <div class="gallery-grid" id="mainGallery"></div>
+    </section>
+
+    <button class="admin-btn" onclick="toggleModal()" title="เพิ่มรูปภาพ">+</button>
+    <div class="admin-modal" id="modal">
+        <div class="modal-content">
+            <h3>Add New Artwork</h3><br>
+            <input type="text" id="artUrl" placeholder="Image URL (เช่น จาก Unsplash)">
+            <input type="text" id="artTitle" placeholder="Artwork Name">
+            <select id="artCat">
+                <option value="ศิลปกรรมเด็กเเละเยาวชนเเห่งชาติ">ศิลปกรรมเด็กเเละเยาวชนเเห่งชาติ</option>
+                <option value="nanmee fine art">Nanmee Fine Art</option>
+                <option value="Digital">Digital Art</option>
+                <option value="Minimal Arts">Minimal Arts</option>
+            </select>
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                <input type="checkbox" id="isFeatured" style="width: auto; margin: 0;"> Pin to Home (Featured)
+            </label><br>
+            <button style="width:100%; padding:15px; background:#000; color:#fff; border:none; border-radius:10px; cursor:pointer; font-weight: 600;" onclick="saveArt()">Save to Gallery</button>
+            <button onclick="toggleModal()" style="width:100%; background:none; border:none; margin-top:15px; cursor:pointer; color:red; font-size: 0.9rem;">Cancel / Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Data Management
+        let database = JSON.parse(localStorage.getItem('flg_db')) || [
+            { id: 1, url: 'https://images.unsplash.com/photo-1549490349-8643362247b5', title: 'Line of Sight', cat: 'Minimal Arts', featured: true },
+            { id: 2, url: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5', title: 'Emotional Grid', cat: 'ศิลปกรรมเด็กเเละเยาวชนเเห่งชาติ', featured: true },
+            { id: 3, url: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853', title: 'Cyber Soul', cat: 'Digital Art', featured: false }
+        ];
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function renderAll() {
+            const homeGrid = document.getElementById('featuredArea');
+            const mainGrid = document.getElementById('mainGallery');
+
+            homeGrid.innerHTML = database.filter(a => a.featured).map(art => createCard(art)).join('');
+            mainGrid.innerHTML = database.map(art => createCard(art)).join('');
+            
+            localStorage.setItem('flg_db', JSON.stringify(database));
+        }
+
+        function createCard(art) {
+            return `
+                <div class="art-card">
+                    <img src="${art.url}" alt="${art.title}" loading="lazy">
+                    <div class="art-card-info">
+                        <p style="font-size: 0.7rem; color: #86868b; text-transform: uppercase; letter-spacing: 1px;">${art.cat}</p>
+                        <h4 style="font-size: 1.2rem; margin-top: 5px; font-weight: 600;">${art.title}</h4>
+                        <button onclick="deleteArt(${art.id})" style="background:none; border:none; color:#ff3b30; font-size: 0.7rem; cursor:pointer; margin-top: 15px; font-weight: 500;">[ Remove Work ]</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function filterGallery(category) {
+            const btns = document.querySelectorAll('.cat-btn');
+            btns.forEach(btn => {
+                const btnText = btn.innerText.trim().toLowerCase();
+                const targetText = category.toLowerCase();
+                btn.classList.toggle('active', btnText === targetText || (category === 'All' && btnText === 'all works'));
+            });
+
+            const mainGrid = document.getElementById('mainGallery');
+            if (category === 'All') {
+                mainGrid.innerHTML = database.map(art => createCard(art)).join('');
+            } else {
+                mainGrid.innerHTML = database.filter(a => a.cat === category).map(art => createCard(art)).join('');
+            }
+        }
+
+        function toggleModal() {
+            const m = document.getElementById('modal');
+            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function saveArt() {
+            const url = document.getElementById('artUrl').value;
+            const title = document.getElementById('artTitle').value;
+            const cat = document.getElementById('artCat').value;
+            const featured = document.getElementById('isFeatured').checked;
+
+            if(!url || !title) return alert('Please fill in both Image URL and Artwork Name');
+
+            database.unshift({ id: Date.now(), url, title, cat, featured });
+            renderAll();
+            toggleModal();
+            
+            document.getElementById('artUrl').value = '';
+            document.getElementById('artTitle').value = '';
+            document.getElementById('isFeatured').checked = false;
+        }
+
+        function deleteArt(id) {
+            if(confirm('Are you sure you want to remove this artwork?')) {
+                database = database.filter(a => a.id !== id);
+                renderAll();
+            }
+        }
+
+        renderAll();
+    </script>
+</body>
+</html>
